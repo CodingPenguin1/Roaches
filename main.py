@@ -11,7 +11,6 @@ from pyglet.window import key
 from Lights import Light
 from Roaches import Roach
 
-
 # Global Constants
 genNum = 0
 GEN_TIME = 300
@@ -20,7 +19,7 @@ SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 1500, 1000
 WORLD_SIZE = SCREEN_SIZE
 NUM_ROACHES = 50
 LIGHT_BRIGHTNESS = 5
-LIGHT_RADIUS = 20
+LIGHT_RADIUS = 100
 FRAMERATE = 60
 speedModifier = 1
 gameWindow = pyglet.window.Window(width=SCREEN_WIDTH, height=SCREEN_HEIGHT, fullscreen=False)
@@ -75,6 +74,16 @@ def update(dt):
                 roachesAlive = 0
             else:
                 roachesAlive = roachCount
+
+    # If light has reached target, find a new one
+    if ((lightSprite.position[0] - lightSprite.position[0])**2 + (lightSprite.target[1] - lightSprite.target[1])**2)**0.5 < lightSprite.SPEED + 1:
+        lightSprite.target = (randint(0, SCREEN_WIDTH), randint(0, SCREEN_HEIGHT))
+
+    # Move the light towards the target
+    dx = lightSprite.target[0] - lightSprite.position[0]
+    dy = lightSprite.target[1] - lightSprite.position[1]
+    distance = (dx**2 + dy**2)**0.5
+    lightSprite.position = (lightSprite.position[0] + dx * lightSprite.SPEED / distance, lightSprite.position[1] + dy * lightSprite.SPEED / distance)
 
 
 def trainingThread():
@@ -169,6 +178,7 @@ if __name__ == '__main__':
     lightSprite = Light(lightImage, WORLD_SIZE, LIGHT_BRIGHTNESS, LIGHT_RADIUS,
                         x=randint(0, SCREEN_WIDTH), y=randint(0, SCREEN_HEIGHT),
                         batch=lightBatch)
+    lightSprite.scale = LIGHT_RADIUS * 2 / lightImage.width
 
     roachSprites = []
     roachesAlive = 0
