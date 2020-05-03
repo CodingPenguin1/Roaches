@@ -76,7 +76,7 @@ def update(dt):
                 roachesAlive = roachCount
 
     # If light has reached target, find a new one
-    if ((lightSprite.position[0] - lightSprite.position[0])**2 + (lightSprite.target[1] - lightSprite.target[1])**2)**0.5 < lightSprite.SPEED + 1:
+    if ((lightSprite.position[0] - lightSprite.target[0])**2 + (lightSprite.position[1] - lightSprite.target[1])**2)**0.5 < lightSprite.SPEED + 1:
         lightSprite.target = (randint(0, SCREEN_WIDTH), randint(0, SCREEN_HEIGHT))
 
     # Move the light towards the target
