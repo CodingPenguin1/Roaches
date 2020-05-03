@@ -1,5 +1,10 @@
 import pyglet
 from random import randint
+from math import inf
+
+
+def distanceBetween(pointA, pointB):
+    return ((pointA[0] - pointB[0])**2 + (pointA[1] - pointB[1])**2)**0.5
 
 
 class Light(pyglet.sprite.Sprite):
@@ -14,3 +19,16 @@ class Light(pyglet.sprite.Sprite):
         self.brightness = brightness  # Light value at the center of the light
         self.radius = radius  # How far the light reaches before becoming 0
         self.target = (randint(0, self.worldWidth), randint(0, self.worldHeight))
+
+    def targetNearestRoach(self, roachList):
+        minDistance = inf
+        newTarget = self.target
+
+        for roach in roachList:
+            if roach.visible:
+                distance = distanceBetween(self.position, roach.position)
+                if distance < minDistance:
+                    minDistance = distance
+                    newTarget = roach.position
+
+        self.target = newTarget

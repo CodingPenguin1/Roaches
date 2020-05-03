@@ -1,6 +1,6 @@
 [NEAT]
 fitness_criterion   = max
-fitness_threshold   = 3500
+fitness_threshold   = 100000
 pop_size            = 30
 reset_on_extinction = False
 
@@ -10,7 +10,7 @@ reset_on_extinction = False
 activation_default      = sigmoid
 
 # The rate at which the activation function of the neuron will change
-activation_mutate_rate  = 0.05
+activation_mutate_rate  = 0.15
 
 # The activation functions available to be used
 activation_options      = sigmoid tanh softplus gauss clamped
@@ -58,7 +58,7 @@ node_delete_prob = 0.09
 
 # Shape of bug brains
 num_hidden = 4
-num_inputs = 3
+num_inputs = 4
 num_outputs = 4
 
 # Default values from the XOR example
@@ -85,10 +85,10 @@ weight_replace_rate     = 0.1
 compatibility_threshold = 3.0
 
 [DefaultStagnation]
-species_fitness_func = mean
+species_fitness_func = max
 max_stagnation       = 20
 species_elitism      = 2
 
 [DefaultReproduction]
-elitism            = 2
+elitism            = 5
 survival_threshold = 0.2

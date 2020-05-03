@@ -25,6 +25,10 @@ speedModifier = 1
 gameWindow = pyglet.window.Window(width=SCREEN_WIDTH, height=SCREEN_HEIGHT, fullscreen=False)
 
 
+def distanceBetween(pointA, pointB):
+    return ((pointA[0] - pointB[0])**2 + (pointA[1] - pointB[1])**2)**0.5
+
+
 @gameWindow.event
 def on_draw():
     gameWindow.clear()
@@ -69,11 +73,23 @@ def update(dt):
                     if roach.visible:
                         roachCount += 1
                         roachesStillAlive = True
-                        roach.useBrain(lightSprite, genTimer)
+                        roach.useBrain(lightSprite)
 
-                # If light has reached target, find a new one
-                if ((lightSprite.position[0] - lightSprite.target[0])**2 + (lightSprite.position[1] - lightSprite.target[1])**2)**0.5 < lightSprite.SPEED + 1:
-                    lightSprite.target = (randint(0, SCREEN_WIDTH), randint(0, SCREEN_HEIGHT))
+                    # Update roach fitness based on how close or far it is from the light
+                    # If in the light source, subtract a lot
+                    if distanceBetween(lightSprite.position, roach.position) < LIGHT_RADIUS:
+                        roach.fitness -= 50
+                    # If far from the light, subtract a bit
+                    elif distanceBetween(lightSprite.position, roach.position) > 1.5 * LIGHT_RADIUS:
+                        roach.fitness -= 20
+                    else:
+                        roach.fitness += 5
+
+                # If light has reached target, find new random target
+                # if distanceBetween(lightSprite.position, lightSprite.target) < Light.SPEED:
+                #     lightSprite.target = (randint(0, SCREEN_WIDTH), randint(0, SCREEN_HEIGHT))
+                # # Target the nearest roach
+                lightSprite.targetNearestRoach(roachSprites)
 
                 # Move the light towards the target
                 dx = lightSprite.target[0] - lightSprite.position[0]

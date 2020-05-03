@@ -8,7 +8,7 @@ def headingBetween(pointA, pointB):
 
 
 def distanceBetween(pointA, pointB):
-    return sqrt(pow(pointA[0] - pointB[0], 2) + pow(pointA[1] - pointB[1], 2))
+    return ((pointA[0] - pointB[0])**2 + (pointA[1] - pointB[1])**2)**0.5
 
 
 def translate(value, minVal, maxVal):
@@ -41,14 +41,12 @@ class Roach(pyglet.sprite.Sprite):
         self.genome = None
         self.genomeID = None
 
-    def useBrain(self, light, genTimer):
+    def useBrain(self, light):
         # 2 inputs: light level at center of bug and angle between the direction the bug is facing and the nearest light source
         # 2 outputs: how hard to turn and fast to go (these aren't instantaneous jumps)
 
         # Direction to the light
-        lightDirection = headingBetween(self.position, light.position) - self.rotation
-        lightDirection + 360
-        lightDirection %= 360
+        lightDirection = headingBetween(self.position, light.position)
 
         # Brightness of the light at the roach
         lightDistance = distanceBetween(self.position, light.position)
@@ -57,11 +55,26 @@ class Roach(pyglet.sprite.Sprite):
             lightLevel = light.brightness * ((light.radius - lightDistance) / light.radius)
 
         # Scale inputs to be in range [0, 1]
-        adjustedDirection = translate(lightDirection, -180, 180)
+        adjustedDirection = translate(lightDirection, 0, 360)
         adjustedDistance = translate(lightLevel, 0, light.brightness)
+        # adjustedDirection = lightDirection
+        # adjustedDistance = lightDistance
 
         # Define input vector
         inputs = (adjustedDirection, adjustedDistance, 1.0)
+
+
+
+        #! Trying to get it to work by giving it exact positions of the light
+        lightX = translate(light.position[0], 0, self.worldWidth)
+        lightY = translate(light.position[1], 0, self.worldHeight)
+        selfX = translate(self.position[0], 0, self.worldWidth)
+        selfY = translate(self.position[0], 0, self.worldHeight)
+        inputs = (lightX, lightY, selfX, selfY)
+
+        #! =============================================================================
+
+
 
         # Do the black magic and get outputs
         outputs = self.brain.activate(inputs) if self.brain is not None else (0, 0, 0, 0)
@@ -81,4 +94,3 @@ class Roach(pyglet.sprite.Sprite):
         if self.health <= 0:
             self.visible = False
             self.health = 0
-            self.fitness = self.health
