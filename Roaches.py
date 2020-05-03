@@ -41,7 +41,7 @@ class Roach(pyglet.sprite.Sprite):
         self.genome = None
         self.genomeID = None
 
-    def useBrain(self, light):
+    def useBrain(self, light, genTimer):
         # 2 inputs: light level at center of bug and angle between the direction the bug is facing and the nearest light source
         # 2 outputs: how hard to turn and fast to go (these aren't instantaneous jumps)
 
@@ -80,3 +80,4 @@ class Roach(pyglet.sprite.Sprite):
         # If health is 0, die
         if self.health <= 0:
             self.visible = False
+            self.fitness = genTimer

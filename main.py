@@ -39,7 +39,9 @@ def on_draw():
 def update(dt):
     global roachesAlive, roachSprites, oldKeyboard, genStart, lightSprite, speedModifier
 
-    if (time() - genStart) * int(speedModifier) >= GEN_TIME:
+    genTimer = int((time() - genStart) * int(speedModifier))
+
+    if genTimer >= GEN_TIME:
         print("KILLING ALL BUGS")
         genStart = time()
         for roach in roachSprites:
@@ -56,8 +58,7 @@ def update(dt):
             speedModifier = 1
 
     if not generationLock.locked():
-        generationInfoLabel.text = "Generation {} - {} seconds - {} roaches alive - SPEED {}x".format(
-            genNum, int((time() - genStart) * int(speedModifier)), roachesAlive, int(speedModifier))
+        generationInfoLabel.text = "Generation {} - {} seconds - {} roaches alive - SPEED {}x".format(genNum, genTimer, roachesAlive, int(speedModifier))
         with generationLock:
             roachCount = 0
             roachesStillAlive = False
@@ -68,22 +69,22 @@ def update(dt):
                     if roach.visible:
                         roachCount += 1
                         roachesStillAlive = True
-                        roach.useBrain(lightSprite)
+                        roach.useBrain(lightSprite, genTimer)
+
+                # If light has reached target, find a new one
+                if ((lightSprite.position[0] - lightSprite.target[0])**2 + (lightSprite.position[1] - lightSprite.target[1])**2)**0.5 < lightSprite.SPEED + 1:
+                    lightSprite.target = (randint(0, SCREEN_WIDTH), randint(0, SCREEN_HEIGHT))
+
+                # Move the light towards the target
+                dx = lightSprite.target[0] - lightSprite.position[0]
+                dy = lightSprite.target[1] - lightSprite.position[1]
+                distance = (dx**2 + dy**2)**0.5
+                lightSprite.position = (lightSprite.position[0] + dx * lightSprite.SPEED / distance, lightSprite.position[1] + dy * lightSprite.SPEED / distance)
 
             if not roachesStillAlive:
                 roachesAlive = 0
             else:
                 roachesAlive = roachCount
-
-    # If light has reached target, find a new one
-    if ((lightSprite.position[0] - lightSprite.target[0])**2 + (lightSprite.position[1] - lightSprite.target[1])**2)**0.5 < lightSprite.SPEED + 1:
-        lightSprite.target = (randint(0, SCREEN_WIDTH), randint(0, SCREEN_HEIGHT))
-
-    # Move the light towards the target
-    dx = lightSprite.target[0] - lightSprite.position[0]
-    dy = lightSprite.target[1] - lightSprite.position[1]
-    distance = (dx**2 + dy**2)**0.5
-    lightSprite.position = (lightSprite.position[0] + dx * lightSprite.SPEED / distance, lightSprite.position[1] + dy * lightSprite.SPEED / distance)
 
 
 def trainingThread():
@@ -143,7 +144,7 @@ if __name__ == '__main__':
     generationLock = threading.Lock()
 
     # Set the window background color
-    pyglet.gl.glClearColor(1.0, 1.0, 1.0, 1.0)
+    pyglet.gl.glClearColor(0.3, 0.3, 0.3, 1.0)
 
     keyboard = key.KeyStateHandler()
     oldKeyboard = key.KeyStateHandler()
