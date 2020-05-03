@@ -72,9 +72,9 @@ class Roach(pyglet.sprite.Sprite):
         self.position = (self.position[0] + speed * cos(pi * self.rotation / 180), self.position[1] - speed * sin(pi * self.rotation / 180))
 
         # Keep the bugs in the world
-        self.position = (max(min(self.position[0], self.worldWidth), 0), max(min(self.position[1], self.worldHeight), 0))
+        self.position = (self.position[0] % self.worldWidth, self.position[1] % self.worldHeight)
 
-        # Update health
+        # Update health---------
         self.health -= lightLevel * Roach.LIGHT_DAMAGE_FACTOR
 
         # If health is 0, die
