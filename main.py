@@ -119,6 +119,7 @@ def evalBugs(genomes, config):
     for roach in roachSprites:
         if roach.genome is not None:
             roach.genome.fitness = roach.fitness
+        roach.health = Roach.INITIAL_HEALTH
 
 
 if __name__ == '__main__':

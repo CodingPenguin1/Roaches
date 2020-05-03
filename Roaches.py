@@ -80,4 +80,5 @@ class Roach(pyglet.sprite.Sprite):
         # If health is 0, die
         if self.health <= 0:
             self.visible = False
-            self.fitness = genTimer
+            self.health = 0
+            self.fitness = self.health
